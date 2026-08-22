@@ -206,7 +206,7 @@ The design contains:
 
 ### Synthesized Output
 
-![Two Stage D Flip-Flop](dffconst3y.png)
+![Two Stage D Flip-Flop](dff_const3both.png)
 
 The image shows the two sequential elements and their connections.
 
