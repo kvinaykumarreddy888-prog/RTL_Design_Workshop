@@ -106,7 +106,7 @@ The waveform was opened in **GTKWave** to verify whether the output `y` correctl
 
 The following is the simulation waveform obtained from GTKWave.
 
-![GTKWave Simulation Output](gtkwave_simulation_output.png)
+![GTKWave Simulation Output](good_mux_gtkwave.png)
 
 ### Observation
 
@@ -158,7 +158,7 @@ The synthesized circuit was viewed using the Yosys `show` command.
 
 ### Yosys Synthesis Output
 
-![Yosys Synthesized MUX](yosys_synthesis_output.png)
+![Yosys Synthesized MUX](goodmuxboth.png)
 
 The schematic shows:
 
