@@ -1,32 +1,38 @@
-# 2:1 Multiplexer (MUX) – RTL Design, Synthesis and Simulation
+Sure — you want the **same README structure as the previous one**, but written in a more **human/student style**, with the clickable index and your output pictures in the same suitable places.
+
+You can copy this directly into GitHub:
+
+# 2:1 Multiplexer (MUX) – RTL Design, Simulation and Synthesis
 
 ## 📑 Index
 
-Click on any topic below to directly jump to that section.
+Click on any topic below to directly go to that section.
 
 1. [About the Experiment](#1-about-the-experiment)
 2. [What is a 2:1 MUX?](#2-what-is-a-21-mux)
 3. [Tools Used](#3-tools-used)
 4. [RTL Design](#4-rtl-design)
-5. [Simulation Result](#5-simulation-result)
+5. [Simulation](#5-simulation)
 6. [GTKWave Output](#6-gtkwave-output)
 7. [Synthesis Using Yosys](#7-synthesis-using-yosys)
 8. [Synthesized Circuit](#8-synthesized-circuit)
 9. [Generated Netlist](#9-generated-netlist)
-10. [Overall Design Flow](#10-overall-design-flow)
+10. [Design Flow](#10-design-flow)
 11. [Project Files](#11-project-files)
 12. [Result](#12-result)
-13. [Key Takeaway](#13-key-takeaway)
+13. [What I Learned](#13-what-i-learned)
 
 ---
 
 ## 1. About the Experiment
 
-In this experiment, I designed and verified a **2:1 Multiplexer (MUX)** using Verilog.
+In this experiment, I worked on a simple **2:1 Multiplexer (MUX)** using Verilog.
 
-The main aim was to understand the basic **RTL-to-netlist flow**. I first verified the design using simulation and GTKWave, and then synthesized the RTL using Yosys with the **Sky130 standard cell library**.
+The main purpose of this experiment was to understand how a small RTL design is developed and verified. I first wrote the Verilog code, then simulated it and checked the waveform using GTKWave. After making sure the design was working correctly, I synthesized it using Yosys.
 
-The final design was mapped to the Sky130 MUX cell:
+I also used the **Sky130 standard cell library** to see how the RTL design gets converted into a standard-cell implementation.
+
+The MUX was mapped to the following Sky130 cell:
 
 ```text
 sky130_fd_sc_hd__mux2_1
@@ -36,23 +42,23 @@ sky130_fd_sc_hd__mux2_1
 
 ## 2. What is a 2:1 MUX?
 
-A **2:1 Multiplexer** is a digital circuit that selects one of two input signals based on a select signal.
+A **2:1 Multiplexer** is a simple digital circuit that selects one input from two available inputs and sends the selected input to the output.
 
-| Signal | Description   |
-| ------ | ------------- |
-| `i0`   | Input 0       |
-| `i1`   | Input 1       |
-| `sel`  | Select signal |
-| `y`    | Output        |
+The inputs used in this experiment are:
 
-The operation is:
+* `i0` – Input 0
+* `i1` – Input 1
+* `sel` – Select signal
+* `y` – Output
+
+The working of the MUX is:
 
 ```text
 sel = 0  →  y = i0
 sel = 1  →  y = i1
 ```
 
-The Boolean expression for the MUX is:
+The Boolean expression is:
 
 ```text
 y = (~sel & i0) | (sel & i1)
@@ -62,20 +68,20 @@ y = (~sel & i0) | (sel & i1)
 
 ## 3. Tools Used
 
-The following tools were used for this experiment:
+I used the following tools for this experiment:
 
-* **Verilog** – RTL design
-* **Yosys** – RTL synthesis
-* **Sky130 Standard Cell Library** – Technology mapping
-* **GTKWave** – Waveform analysis
-* **Graphviz** – Circuit visualization
-* **Oracle VirtualBox** – Linux/EDA environment
+* **Verilog** – for writing the RTL code
+* **Yosys** – for synthesis
+* **Sky130 Standard Cell Library** – for technology mapping
+* **GTKWave** – for viewing simulation waveforms
+* **Graphviz** – for viewing the synthesized circuit
+* **Oracle VirtualBox** – for running the Linux/EDA environment
 
 ---
 
 ## 4. RTL Design
 
-The 2:1 MUX was written as a simple combinational Verilog circuit.
+The 2:1 MUX was written using a simple Verilog `assign` statement.
 
 ```verilog
 module good_mux (
@@ -90,33 +96,47 @@ assign y = sel ? i1 : i0;
 endmodule
 ```
 
-Since this is a combinational circuit, there is no clock or reset signal.
+This is a combinational circuit, so there is no clock or reset signal.
+
+The output depends directly on the input signals and the select signal.
 
 ---
 
-## 5. Simulation Result
+## 5. Simulation
 
-After writing the RTL and testbench, I simulated the design and generated a VCD waveform file.
+After writing the RTL code, I created a testbench and simulated the design.
 
-The waveform was opened in **GTKWave** to verify whether the output `y` correctly follows the selected input.
+The simulation generated a waveform file, which I opened using **GTKWave**.
+
+I mainly checked the following signals:
+
+```text
+i0
+i1
+sel
+y
+```
+
+The purpose of the simulation was to make sure that the output was selecting the correct input for different values of `sel`.
 
 ---
 
 ## 6. GTKWave Output
 
-The following is the simulation waveform obtained from GTKWave.
+The following is the waveform output obtained from the simulation:
 
-![GTKWave Simulation Output](good_mux_gtkwave.png)
+![GTKWave Simulation Output](gtkwave_simulation_output.png)
 
 ### Observation
 
-From the waveform:
+From the waveform, I observed that:
 
 * When `sel = 0`, the output `y` follows `i0`.
 * When `sel = 1`, the output `y` follows `i1`.
-* The output changes according to the selected input.
 
-The waveform confirms that the **2:1 MUX is working as expected**.
+So the waveform matches the expected behavior of a 2:1 MUX.
+
+This confirmed that the RTL design was working correctly before moving to the synthesis stage.
 
 [⬆️ Back to Index](#-index)
 
@@ -124,16 +144,15 @@ The waveform confirms that the **2:1 MUX is working as expected**.
 
 ## 7. Synthesis Using Yosys
 
-After verifying the functionality through simulation, I synthesized the RTL using **Yosys**.
+After verifying the design through simulation, I moved on to synthesis using **Yosys**.
 
-The synthesis process included:
+The basic synthesis process was:
 
-1. Reading the Verilog RTL.
-2. Running synthesis and optimization.
-3. Performing technology mapping.
-4. Mapping the design to the Sky130 standard-cell library.
-5. Generating the synthesized Verilog netlist.
-6. Viewing the synthesized circuit using the Yosys `show` command.
+1. Read the Verilog RTL.
+2. Perform synthesis and optimization.
+3. Map the design to the Sky130 standard cell library.
+4. Generate the synthesized netlist.
+5. View the synthesized circuit.
 
 The Yosys output showed:
 
@@ -150,24 +169,28 @@ The design was successfully mapped to:
 sky130_fd_sc_hd__mux2_1
 ```
 
+This shows that the simple MUX RTL was converted into a standard cell from the Sky130 library.
+
 ---
 
 ## 8. Synthesized Circuit
 
-The synthesized circuit was viewed using the Yosys `show` command.
+After synthesis, I used Yosys to view the synthesized circuit.
 
-### Yosys Synthesis Output
+### Yosys Output
 
-![Yosys Synthesized MUX](goodmuxboth.png)
+![Yosys Synthesized MUX](yosys_synthesis_output.png)
 
-The schematic shows:
+The synthesized circuit contains:
 
-* `i0` connected to the first MUX input.
-* `i1` connected to the second MUX input.
-* `sel` connected to the select input.
-* `y` connected to the output.
+* `i0` – first data input
+* `i1` – second data input
+* `sel` – select input
+* `y` – output
 
-The terminal output and generated netlist visible in the screenshot also show the successful Yosys synthesis and technology mapping.
+The screenshot also shows the Yosys synthesis information and the generated netlist.
+
+The circuit structure matches the expected behavior of a 2:1 MUX.
 
 [⬆️ Back to Index](#-index)
 
@@ -175,19 +198,21 @@ The terminal output and generated netlist visible in the screenshot also show th
 
 ## 9. Generated Netlist
 
-After synthesis, Yosys generated a Verilog netlist containing the Sky130 standard-cell MUX:
+After synthesis, Yosys generated a Verilog netlist.
 
-```verilog
+The important cell present in the synthesized design is:
+
+```text
 sky130_fd_sc_hd__mux2_1
 ```
 
-This shows how the original RTL description was converted into a **technology-specific standard-cell implementation**.
+This was one of the main things I wanted to observe in this experiment — how the simple RTL code gets converted into a technology-specific standard-cell implementation.
 
 ---
 
-## 10. Overall Design Flow
+## 10. Design Flow
 
-The complete flow followed in this experiment was:
+The complete flow I followed was:
 
 ```text
 Verilog RTL
@@ -196,24 +221,24 @@ Testbench
      ↓
 Simulation
      ↓
-GTKWave Verification
+GTKWave
+     ↓
+Waveform Verification
      ↓
 Yosys Synthesis
      ↓
-Technology Mapping
-     ↓
-Sky130 MUX Cell
+Sky130 Technology Mapping
      ↓
 Synthesized Netlist
      ↓
-Yosys Circuit View
+Synthesized Circuit
 ```
 
 ---
 
 ## 11. Project Files
 
-The GitHub repository can contain the following files:
+The GitHub repository can be organized like this:
 
 ```text
 good-mux/
@@ -227,40 +252,44 @@ good-mux/
 └── README.md
 ```
 
-> **Note:** Keep the two image files in the same folder as `README.md`. This is important because GitHub uses the image filenames in the README to display the screenshots.
+> **Note:** Keep both `.png` files in the same folder as `README.md`. This is required for GitHub to display the screenshots correctly.
 
 ---
 
 ## 12. Result
 
-The **2:1 MUX was successfully designed, simulated, synthesized, and technology-mapped**.
+The **2:1 MUX was successfully designed and verified**.
 
-The GTKWave waveform verified the functional behavior of the MUX, while the Yosys output confirmed that the RTL was mapped to the Sky130 standard cell:
+The GTKWave simulation confirmed that the output `y` correctly follows the selected input.
+
+After simulation, the RTL was synthesized using Yosys and mapped to the Sky130 standard cell:
 
 ```text
 sky130_fd_sc_hd__mux2_1
 ```
 
-The synthesized schematic also matched the expected MUX structure.
+The synthesized circuit also showed the expected MUX structure.
+
+So, the experiment was completed successfully.
 
 [⬆️ Back to Index](#-index)
 
 ---
 
-## 13. Key Takeaway
+## 13. What I Learned
 
-This experiment gave me practical experience with the **RTL-to-netlist flow** using open-source EDA tools.
+Through this experiment, I got a better understanding of the basic **RTL-to-netlist flow**.
 
-Starting with a simple Verilog MUX, I was able to:
+I learned how to:
 
-* Write the RTL design.
-* Simulate and verify its functionality.
-* Analyze the waveform using GTKWave.
-* Synthesize the RTL using Yosys.
-* Perform technology mapping using Sky130.
+* Write a simple 2:1 MUX in Verilog.
+* Create and run a testbench.
+* Check the simulation waveform using GTKWave.
+* Synthesize RTL using Yosys.
+* Use the Sky130 standard cell library.
 * Generate a synthesized netlist.
 * View the synthesized circuit.
 
-This small experiment helped me understand how an RTL design is transformed into a **technology-specific standard-cell implementation**.
+Overall, this experiment helped me understand how a simple Verilog design can move from **RTL code → simulation → synthesis → standard-cell implementation**.
 
 [⬆️ Back to Index](#-index)
