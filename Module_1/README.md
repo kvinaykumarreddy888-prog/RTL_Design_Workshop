@@ -1,135 +1,170 @@
-Yes. You mean the **README structure and headings should look professional and clean on GitHub**, not like a long report.
-
-Use clear GitHub-style sections such as **Overview, Tools & Technologies, Design Configuration, OpenLane Setup, Synthesis Flow, Results, Timing Analysis, Output Files, Conclusion, Future Work**.
-
-Here is a cleaner version you can copy directly:
-
-````markdown
 # PicoRV32A ASIC Synthesis using OpenLane and Sky130A
 
-## Overview
+## 📑 Index
 
-This project demonstrates the synthesis of the **PicoRV32A RISC-V processor** using the **OpenLane ASIC design flow** with the **Sky130A PDK**.
+Click on any topic below to directly go to that section.
 
-The experiment was carried out from RTL preparation through synthesis, technology mapping, synthesized netlist generation, and static timing analysis.
+1. [About the Experiment](#about-the-experiment)
+2. [Tools Used](#tools-used)
+3. [Design Configuration](#design-configuration)
+4. [OpenLane Setup](#openlane-setup)
+5. [Synthesis Flow](#synthesis-flow)
+6. [Technology Mapping](#technology-mapping)
+7. [Synthesized Netlist](#synthesized-netlist)
+8. [Synthesis Statistics](#synthesis-statistics)
+9. [Static Timing Analysis](#static-timing-analysis)
+10. [Key Results](#key-results)
+11. [Project Outputs](#project-outputs)
+12. [What I Learned](#what-i-learned)
+13. [Conclusion](#conclusion)
+14. [Future Work](#future-work)
 
 ---
 
-## Tools & Technologies
+## About the Experiment
 
-- **OpenLane v0.21**
-- **Yosys 0.9+3621**
-- **OpenSTA 2.3.0**
-- **Sky130A PDK**
-- **sky130_fd_sc_hd** standard-cell library
-- **Verilog**
-- **Linux / Ubuntu**
+This experiment focuses on the synthesis of the **PicoRV32A RISC-V processor** using the **OpenLane ASIC design flow** with the **Sky130A PDK**.
+
+I worked through the flow step by step, starting with the design configuration and OpenLane setup, followed by RTL synthesis, technology mapping, netlist generation, synthesis statistics, and static timing analysis.
+
+The main objective was to understand how a **Verilog RTL design is converted into a technology-mapped ASIC netlist** using an open-source EDA flow.
+
+---
+
+## Tools Used
+
+| Tool / Technology | Version / Details |
+|---|---|
+| OpenLane | v0.21 |
+| Yosys | 0.9+3621 |
+| OpenSTA | 2.3.0 |
+| PDK | Sky130A |
+| Standard Cell Library | `sky130_fd_sc_hd` |
+| HDL | Verilog |
+| Operating System | Linux / Ubuntu |
 
 ---
 
 ## Design Configuration
 
+The PicoRV32A design was configured with the following parameters:
+
 | Parameter | Value |
 |---|---|
-| Design | PicoRV32A |
 | Design Name | `picorv32a` |
 | Clock Port | `clk` |
 | Clock Period | `5.000 ns` |
 | PDK | `sky130A` |
 | Standard Cell Library | `sky130_fd_sc_hd` |
 
-### Design Configuration Screenshot
+### Configuration Screenshot
 
-![Design Configuration](images/conflict_tcl_picorv32a.png)
+![Design Configuration](conflict_tcl_picorv32a.png)
 
 ---
 
 ## OpenLane Setup
 
-I started the OpenLane flow in **interactive mode** and prepared the PicoRV32A design for synthesis.
+I started OpenLane in **interactive mode** and prepared the PicoRV32A design for synthesis.
 
-### OpenLane Interactive Mode
+### Start OpenLane
 
 ```bash
 flow.tcl -interactive
 ```
 
-### Preparing the Design
+### Prepare the Design
 
 ```tcl
 package require openlane 0.9
 prep -design picorv32a
 ```
 
-![OpenLane Interactive Flow](images/flow_tcl_interatives.png)
+### OpenLane Interactive Flow
+
+![OpenLane Interactive Flow](flow_tcl_interatives.png)
 
 ---
 
 ## Synthesis Flow
 
-The PicoRV32A RTL was processed through the following synthesis stages:
+The PicoRV32A RTL was processed through the synthesis flow using **Yosys**.
+
+The main stages of the synthesis process were:
 
 ```text
 PicoRV32A RTL
-      ↓
+      │
+      ▼
 Yosys Synthesis
-      ↓
+      │
+      ▼
 Logic Optimization
-      ↓
+      │
+      ▼
 ABC Technology Mapping
-      ↓
+      │
+      ▼
 DFF Legalization
-      ↓
+      │
+      ▼
 Sky130 Standard-Cell Mapping
-      ↓
+      │
+      ▼
 Synthesized Netlist
 ```
 
 ### Synthesis Execution
 
-![Synthesis Run](images/run_sysnthesis_piscrv32a.png)
+![Synthesis Run](run_sysnthesis_piscrv32a.png)
 
 ---
 
 ## Technology Mapping
 
-After synthesis, the design was mapped to the **Sky130 high-density standard-cell library**.
+After synthesis and optimization, the design was mapped to the **Sky130 high-density standard-cell library**.
 
 ```text
 sky130_fd_sc_hd
 ```
 
-The synthesis output also shows the mapping of flip-flop cells to the corresponding Sky130 standard cells.
+The synthesis output also showed the mapping of flip-flop cells to the corresponding Sky130 standard cells.
 
-### Technology Mapping Results
+### Technology Mapping
 
 ![Technology Mapping](images/less_merge.png)
 
-![Technology Mapping Details](images/less_merge2.png)
+### DFF Mapping
 
-![Technology Mapping Output](images/less_merge3.png)
+![Technology Mapping Details](less_merge2.png)
+
+### Mapping Output
+
+![Technology Mapping Output](less_merge3.png)
 
 ---
 
 ## Synthesized Netlist
 
-The synthesis process generated the technology-mapped Verilog netlist:
+One of the main outputs of the synthesis stage was the technology-mapped Verilog netlist:
 
 ```text
 picorv32a.synthesis.v
 ```
 
-### Netlist Output
+This netlist represents the synthesized PicoRV32A design after mapping the RTL logic to Sky130 standard cells.
 
-![Synthesized Netlist](images/picorv32a_synthesis_netlist.png)
+### Synthesized Netlist
+
+![Synthesized Netlist](picorv32a_synthesis_netlist.png)
 
 ---
 
 ## Synthesis Statistics
 
-The Yosys synthesis reports were used to check the size and structure of the synthesized design.
+I checked the Yosys synthesis statistics to understand the size and structure of the synthesized design.
 
-### Main Synthesis Statistics
+### Main Statistics
 
 | Parameter | Result |
 |---|---:|
@@ -139,47 +174,51 @@ The Yosys synthesis reports were used to check the size and structure of the syn
 | Public Wire Bits | 1,947 |
 | Memories | 0 |
 | Processes | 0 |
-| **Cells** | **14,876** |
+| **Total Cells** | **14,876** |
 
-### Yosys Statistics
+### Yosys Synthesis Statistics
 
-![Yosys Synthesis Statistics](images/less_yosys_synthesis_stat.png)
+![Yosys Synthesis Statistics](less_yosys_synthesis_stat.png)
 
 ### PicoRV32A Statistics
 
-![PicoRV32A Statistics](images/picorv32a_stats.png)
+![PicoRV32A Statistics](picorv32a_stats.png)
 
-![PicoRV32A Statistics 2](images/picorv32a_stats.1png.png)
+![PicoRV32A Statistics 2](picorv32a_stats.1png.png)
 
-![PicoRV32A Statistics 3](images/picorv32a_stats3.png)
+![PicoRV32A Statistics 3](picorv32a_stats3.png)
 
 ---
 
 ## Static Timing Analysis
 
-After synthesis, timing information was checked using **OpenSTA**.
+After synthesis, I used **OpenSTA** to examine the timing information of the synthesized design.
 
-The design was configured with a clock period of:
+The configured clock period was:
 
 ```text
 5.000 ns
 ```
 
-The generated OpenLane reports contain timing information from the synthesized design.
+The OpenLane flow generated timing-related reports that were used to inspect the synthesized design.
 
 ### Timing / Synthesis Report
 
-![Synthesis Report](images/synthesis_report.png)
+![Synthesis Report](synthesis_report.png)
 
 ---
 
 ## Key Results
+
+The main results obtained from the synthesis experiment are summarized below:
 
 | Parameter | Result |
 |---|---|
 | Design | PicoRV32A |
 | Total Cells | **14,876** |
 | Total Wires | **14,596** |
+| Wire Bits | **14,978** |
+| Public Wires | **1,565** |
 | Clock Period | **5.000 ns** |
 | PDK | **Sky130A** |
 | Standard Cell Library | **sky130_fd_sc_hd** |
@@ -189,23 +228,43 @@ The generated OpenLane reports contain timing information from the synthesized d
 
 ## Project Outputs
 
-The main outputs obtained from the experiment include:
+The main outputs generated during this experiment include:
 
-- Synthesized Verilog netlist
+- Technology-mapped Verilog netlist
 - Yosys synthesis statistics
 - Technology mapping results
-- OpenSTA timing reports
 - DFF mapping results
+- OpenSTA timing reports
+- Synthesis reports
+
+---
+
+## What I Learned
+
+Through this experiment, I gained practical experience with the **OpenLane ASIC synthesis flow**.
+
+I learned how to:
+
+- Prepare an RTL design for OpenLane
+- Run OpenLane in interactive mode
+- Perform synthesis using Yosys
+- Optimize RTL logic
+- Perform ABC technology mapping
+- Map logic to Sky130 standard cells
+- Analyze DFF mapping
+- Generate a synthesized Verilog netlist
+- Analyze synthesis statistics
+- Examine timing information using OpenSTA
 
 ---
 
 ## Conclusion
 
-This experiment gave me practical experience with the **OpenLane ASIC synthesis flow** using the **Sky130A PDK**.
+This experiment helped me understand the practical steps involved in taking a **Verilog RTL design toward ASIC implementation** using an open-source EDA flow.
 
-I worked through the synthesis process, observed technology mapping to standard cells, generated the synthesized netlist, and examined the synthesis and timing reports.
+The PicoRV32A design was successfully synthesized, and the flow generated the synthesized netlist, synthesis statistics, technology-mapping results, and timing reports.
 
-It helped me understand how a **Verilog RTL design moves toward ASIC implementation** using an open-source EDA flow.
+This provided hands-on experience with the early stages of the **RTL-to-ASIC design flow**.
 
 ---
 
@@ -213,22 +272,12 @@ It helped me understand how a **Verilog RTL design moves toward ASIC implementat
 
 The next stages I plan to explore are:
 
-- Floorplanning
-- Placement
-- Clock Tree Synthesis (CTS)
-- Routing
-- Design Rule Checking (DRC)
-- Layout Versus Schematic (LVS)
-- Post-route timing analysis
-- GDSII generation
+1. Floorplanning
+2. Placement
+3. Clock Tree Synthesis (CTS)
+4. Routing
+5. Design Rule Checking (DRC)
+6. Layout Versus Schematic (LVS)
+7. Post-route timing analysis
+8. GDSII generation
 
----
-
-## Author
-
-**A. Vidyasagar**  
-B.Tech – Electronics and Communication Engineering  
-Anurag University
-````
-
-This is much more suitable for a **GitHub project README**: clean hierarchy, proper section labels, tables where useful, and all **12 of your exact image filenames** are included.
